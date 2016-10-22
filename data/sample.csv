@@ -1,0 +1,7 @@
+"user_id","reason_to_contact","gender","education","what_person_wants","intervention","shelter_checked_at","date_checked","checked_at_shelter"
+"8917993","could not pay rent","M","some high school","$300","job training","Shelter2","2016/10/22 01:03:01","No"
+"3919355","could not pay rent","M","some high school","$300","gave bed","Shelter3","2016/10/22 01:20:01","Yes"
+"7413608","could not pay rent","M","some high school","$300","job training","Shelter2","2016/10/22 04:00:01","No"
+"2513626","could not pay rent","M","some high school","$300","gave bed","Shelter3","2016/10/22 00:14:01","Yes"
+"4983384","could not pay rent","M","some high school","$300","did not give money","Shelter1","2016/10/22 01:41:01","Yes"
+"3006693","could not pay rent","M","some high school","$300","gave money",NA,"2016/10/22 01:42:01","No"

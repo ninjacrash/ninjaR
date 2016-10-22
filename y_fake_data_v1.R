@@ -3,10 +3,10 @@ library(stringi)
 ##########################################################
 # Hard coded variables, can be used as command line params
 ##########################################################
+set.seed(1)
 DATA_SIZE <- 100
 TIME_DIFF <- 5
 OUTLIER_PROBABILITIES <- seq(0.05, 0.1, by = 0.01)
-set.seed(1)
 
 ##########################################################
 # Generating features for dataset
