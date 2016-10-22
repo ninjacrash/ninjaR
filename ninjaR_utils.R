@@ -10,13 +10,13 @@ packagedownloader <- function(requirementsfile) {
 }
 
 # Store all scripts here
-scripts <- c("ninjaR_driver.R",
-             "generate_data.R")
+scripts <- c("generate_data.R")
 
 repo_sourcer <- function(){
   # Sources all R scripts in repo
   for(s in scripts){
     source(s)
-    print(paste("Sourced",s))
+    # print(paste("Sourced",s))
   }  
 }
+
