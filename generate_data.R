@@ -61,7 +61,7 @@ generate_data <- function(size, seed = 1, time_diff_hours = 5, outlier_prob = se
   time.start <- as.POSIXct(time.start.temp)
   
   # Generating date_checked
-  date_checked <- sample(seq(from = time.start, to = time.now, by = "mins"), DATA_SIZE)
+  date_checked <- sample(seq(from = time.start, to = time.now, by = "mins"), DATA_SIZE, replace = TRUE)
   date_checked <- format(date_checked, "%Y/%m/%d %H:%M:%S")
   date_checked <- as.character(format(date_checked, format = "%Y/%m/%d"))
   
