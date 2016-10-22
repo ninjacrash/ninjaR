@@ -24,5 +24,32 @@ my.control.wpw<-as.vector(rmultinom(1, size = 100, prob = c(0.1,0.2,0.5,0.1,0.1)
 wpw<-unlist(mapply(rep, times=my.control.wpw, wpw.values))
 table(wpw)
 
-yakov.data<-data.frame(reason_to_contact=rtc,gender=gender,education=educ,what_person_wants=wpw)
+#
+shelter_checked_at <- as.factor(sample(c("Shelter1", "Shelter2", "Shelter3"), 
+                                       100,
+                                       prob = c(0.25, 0.5, 0.25), 
+                                       replace = TRUE))
+#
+date_checked <- sample(seq(as.Date('1999/01/01'), as.Date('2000/01/01'), 
+                           by="day"), 
+                       100)
 
+#
+intervention <- as.factor(sample(c("gave money", "did not give money", "gave bed", "job training", "family therapy"), 
+                                       100,
+                                       prob = c(0.15, 0.27, 0.39, 0.11, 0.08),
+                                       replace = TRUE))
+#
+checked_at_shelter <- as.factor(sample(c("No", "Yes"), 
+                                       100,
+                                       prob = c(0.5, 0.5),
+                                       replace = TRUE))
+
+yakov.data<-data.frame(reason_to_contact=rtc,gender=gender,education=educ,what_person_wants=wpw,
+                       intervention = intervention, shelter_checked_at = shelter_checked_at, 
+                       date_checked = date_checked, checked_at_shelter = checked_at_shelter)
+
+
+#########################################################
+
+#########################################################
