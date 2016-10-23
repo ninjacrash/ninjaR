@@ -58,18 +58,19 @@ get_prediction_matrix.RF <- function(data, seed = 1){
   pred
 }
 
-get_prediction_matrix.GLM <- function(data, seed = 1){
+get_prediction_matrix.LM <- function(data, seed = 1){
   # set.seed(123)
-  ignore.cols <- c(2, 6, 7, 8, 9)
-  dependent.variable <- 5
-  id.variable <- 11
+  ignore.cols <- c(2, 6, 7, 8, 9, 10)
+  dependent.variable <- 6
+
   partitioned_data <- divide_data(data[, -ignore.cols])
   train <- partitioned_data$train
   test <- partitioned_data$test
   # @deep Refactor here start
   # hold.me.out <- list('train' = train[, c(1, 4)], 'test' = test[, c(1, 4)])
-  # train <- train[complete.cases(train),]
-  # test <- test[complete.cases(test),]
+  train <- train[complete.cases(train),]
+  test <- test[complete.cases(test),]
+  id.variable <- 5
   # hold.me.out$train <- hold.me.out$train[hold.me.out$train[, 1] %in% train.user_id, 2]
   # hold.me.out$test <- hold.me.out$test[hold.me.out$test[, 1] %in% test.user_id, 2]
   # train <- cbind(train[, c(1:4)], hold.me.out$train, train[, 6:9])  
@@ -78,8 +79,9 @@ get_prediction_matrix.GLM <- function(data, seed = 1){
   
   ##Predicting Checked_at_shelter based on other variables (excluding id, date_time,shelter_checked_at)
   # set.seed(100)
+  train[,dependent.variable] <- as.factor(train[,dependent.variable])
   vglm.formula <- paste(c(names(train[dependent.variable]), paste(names(train)[-c(dependent.variable, id.variable)], collapse = " + ")), collapse = ' ~ ')
-  LM <- vglm(formula = vglm.formula, train[,-c(dependent.variable, id.variable)], family = binomialff)
+  LM <- vglm(formula = vglm.formula, x = train[,-c(id.variable, dependent.variable)], y = train[, dependent.variable], family = binomialff)
   print(LM)
   LM
   LM_prediction <- 1 - predict(LM, test, type="response")

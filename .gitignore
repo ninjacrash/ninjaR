@@ -33,3 +33,4 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 data/full.csv
+data/user_table.csv
