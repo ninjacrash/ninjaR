@@ -42,6 +42,7 @@ pred.cat<-data.frame(RF.prediction.category=predict(RF,test[,c(3,4,5,6)]))
 pred.prob<-data.frame(RF.prediction=predict(RF,test[,c(3,4,5,6)],type="prob"))
 pred<-cbind(test[,c("user_id1","event_id")],pred.cat,pred.prob)
 
+
 ###Checks
 table(train$education)
 table(train$gender)
@@ -50,6 +51,10 @@ table(train$dependents)
 
 ###################################
 ### New User Prediction
+t.to.keep<-train[,c(3,4,5,6)]
+save(t.to.keep,file="training_data.RData")
+save(RF,file="RF_model.RData")
+
 new.user<-data.frame(education="high_school",gender="f",reason="lost_job",dependents="2")
 do.factors<-rbind(train[,c(3,4,5,6)],new.user)
 last.row<-nrow(do.factors)
