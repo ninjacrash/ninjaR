@@ -1,4 +1,4 @@
-generate_data <- function(size, seed = 1, time_diff_hours = 5, outlier_prob = seq(0.05, 0.1, by = 0.01)){
+generate_data <- function(size, seed = 1, time.start = as.POSIXct('2014-01-01 09:00.00 CDT', tz="America/Chicago"), outlier_prob = seq(0.05, 0.1, by = 0.01)){
   # Function generates a data frame of given size
   
   ##########################################################
@@ -6,38 +6,36 @@ generate_data <- function(size, seed = 1, time_diff_hours = 5, outlier_prob = se
   ##########################################################
   set.seed(seed)
   DATA_SIZE <- size
-  TIME_DIFF <- time_diff_hours
+  TIME_START <- time.start
   OUTLIER_PROBABILITIES <- outlier_prob
-  
-  ##########################################################
+  SAMPLE_MESSAGES <- as.character(read.csv("./data/stories.csv",header=F)$V1)
+  UIDS <- as.character(read.csv("./data/UIDs.csv",header=F)$V1)
+ ##########################################################
   # Generating features for dataset
   ##########################################################
   
   # Generating user_id
-  u.id<-stringi::stri_rand_strings(DATA_SIZE, 6)
-  for (i in 1:30) {
-    u.id[i]<-paste(sample(0:9,7,replace=TRUE), collapse="" )
-  }
+  user_id <- sample(x = UIDS, size = DATA_SIZE, replace = TRUE)
   
   # Generating reason_to_contact
-  rtc.values<-c("could not pay rent","have nowhere to sleep","lost my job","potential family violence")
-  my.control.rtc<-as.vector(rmultinom(1, size = DATA_SIZE, prob = c(0.2,0.6,0.1,0.1)))
-  rtc<-unlist(mapply(rep, times=my.control.rtc, rtc.values))
+  # rtc.values<-c("could not pay rent","have nowhere to sleep","lost my job","potential family violence")
+  # my.control.rtc<-as.vector(rmultinom(1, size = DATA_SIZE, prob = c(0.2,0.6,0.1,0.1)))
+  # rtc<-unlist(mapply(rep, times=my.control.rtc, rtc.values))
   
   # Generating gender
-  gender.values<-c("M","F")
-  my.control.gender<-as.vector(rmultinom(1, size = DATA_SIZE, prob = c(0.6,0.4)))
-  gender<-unlist(mapply(rep, times=my.control.gender, gender.values))
+  # gender.values<-c("M","F")
+  # my.control.gender<-as.vector(rmultinom(1, size = DATA_SIZE, prob = c(0.6,0.4)))
+  # gender<-unlist(mapply(rep, times=my.control.gender, gender.values))
   
   # Generating education
-  ed.values<-c("some high school","high school","college")
-  my.control.ed<-as.vector(rmultinom(1, size = DATA_SIZE, prob = c(0.4,0.4,0.2)))
-  educ<-unlist(mapply(rep, times=my.control.ed, ed.values))
+  # ed.values<-c("some high school","high school","college")
+  # my.control.ed<-as.vector(rmultinom(1, size = DATA_SIZE, prob = c(0.4,0.4,0.2)))
+  # educ<-unlist(mapply(rep, times=my.control.ed, ed.values))
   
   # Generating what_person_wants
-  wpw.values<-c("$300","$400","bed",NA,"safety")
-  my.control.wpw<-as.vector(rmultinom(1, size = DATA_SIZE, prob = c(0.1,0.2,0.5,0.1,0.1)))
-  wpw<-unlist(mapply(rep, times=my.control.wpw, wpw.values))
+  wpw.values<-c(SAMPLE_MESSAGES)
+  my.control.wpw<-as.vector(rmultinom(1, size = DATA_SIZE, prob = c(rep(0.08, 12), 0.04)))
+  wpw<- sample(unlist(mapply(rep, times=my.control.wpw, wpw.values)))
   
   # Creating missing values
   holes <- as.logical(rbinom(n = DATA_SIZE, size = 1, prob = sample(OUTLIER_PROBABILITIES, 1)))
@@ -56,18 +54,11 @@ generate_data <- function(size, seed = 1, time_diff_hours = 5, outlier_prob = se
   # Generating time bounds of data collection
   # To be used in next section
   time.now <- Sys.time()
-  time.start.temp <- as.POSIXlt(time.now)
-  time.start.temp$hour <- time.start.temp$hour - TIME_DIFF
-  time.start <- as.POSIXct(time.start.temp)
   
   # Generating date_checked
   date_checked <- sample(seq(from = time.start, to = time.now, by = "mins"), DATA_SIZE, replace = TRUE)
-  date_checked <- format(date_checked, "%Y/%m/%d %H:%M:%S")
-  date_checked <- as.character(format(date_checked, format = "%Y/%m/%d"))
-  
-  # Creating missing values
-  holes <- as.logical(rbinom(n = DATA_SIZE, size = 1, prob = sample(OUTLIER_PROBABILITIES, 1)))
-  date_checked[holes] <- NA
+  date_checked <- strftime(as.POSIXlt(date_checked), format = "%m/%d/%Y %H:%M:%S %Z", tz = 'America/Chicago') 
+
   
   # Generating intervention
   intervention <- as.factor(sample(c("gave money", "did not give money", "gave bed", "job training", "family therapy"), 
@@ -81,18 +72,21 @@ generate_data <- function(size, seed = 1, time_diff_hours = 5, outlier_prob = se
                                          prob = c(0.5, 0.5),
                                          replace = TRUE))
   
+  # Creating missing values
+  holes <- which(checked_at_shelter == 'No')
+  date_checked[holes] <- NA
+  
   ##########################################################
   # Dataset creation
   ##########################################################
   
-  data<-data.frame(user_id = u.id, 
-                   reason_to_contact = rtc, 
-                   gender = gender,
-                   education = educ,
-                   what_person_wants = wpw, 
+  data<-data.frame(user_id = user_id,  
+                   # gender = gender,
+                   # education = educ,
+                   message = wpw, 
                    intervention = intervention, 
-                   shelter_checked_at = shelter_checked_at, 
-                   date_checked = date_checked, 
+                   shelter_name = shelter_checked_at, 
+                   event_dt = date_checked, 
                    checked_at_shelter = checked_at_shelter)
   
   
